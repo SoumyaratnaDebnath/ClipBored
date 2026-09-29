@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f4">
+  <title>ClipBored — your shared clipboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="ClipBored home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z"/><path d="M9 5V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1"/></svg></span><span>clipbored<span class="brand-period">.</span></span></a>
+    <div class="sync-status"><span class="live-dot"></span><span id="sync-label">Connected</span></div>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> YOUR SPACE, IN SYNC</div>
+      <h1>A little space for <span>what matters.</span></h1>
+    </section>
+
+    <section class="composer" aria-labelledby="compose-title">
+      <div class="composer-heading"><div><span class="section-kicker">NEW CLIP</span><h2 id="compose-title">Add to your clipboard</h2></div><span class="count" id="char-count">0 / 10,000</span></div>
+      <textarea id="clip-input" maxlength="10000" placeholder="Paste or type something you want to keep…" aria-label="New clipboard text"></textarea>
+      <div class="composer-footer"><span class="hint"><kbd>⌘</kbd><kbd>↵</kbd> to save</span><div class="composer-actions"><button class="paste-device" id="paste-device"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8m-3-3 3 3 3-3M3 11v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2"/></svg>Paste from device</button><button class="save-button" id="save-button"><span>Save clip</span><svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button></div></div>
+    </section>
+
+    <section class="clips-section" aria-labelledby="clips-title">
+      <div class="list-heading"><div><span class="section-kicker">YOUR LIBRARY</span><h2 id="clips-title">Saved clips <span class="clip-count" id="clip-count">0</span></h2></div><button class="refresh-button" id="refresh-button" title="Refresh clips" aria-label="Refresh clips"><svg viewBox="0 0 20 20" fill="none"><path d="M16.5 7A7 7 0 0 0 4 5.5L2.5 7M3 3v4h4m.5 6a7 7 0 0 0 12.5 1.5l1.5-1.5M17 17v-4h-4"/></svg></button></div>
+      <div id="clip-list" class="clip-list" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state"><div class="empty-art"><span></span><span></span><span></span><span></span></div><p>Your clipboard is looking a little empty.</p><span>Save your first clip above and it’ll show up here.</span></div>
+    </section>
+    <footer><span>Made for the things you don’t want to lose.</span><span class="footer-mark">CB<span>✳</span></span></footer>
+  </main>
+  <div class="toast" id="toast" role="status"></div>
+</body>
+</html>
