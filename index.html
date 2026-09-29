@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f7f4">
   <title>ClipBored — your shared clipboard</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="document.getElementById('sync-label').textContent='Offline'"></script>
-  <script src="./app.js?v=2" defer></script>
+  <script src="./app.js?v=4" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/" aria-label="ClipBored home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z"/><path d="M9 5V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1"/></svg></span><span>clipbored<span class="brand-period">.</span></span></a>
+    <a class="brand" href="/" aria-label="ClipBored home"><span class="brand-icon brand-emoji" aria-hidden="true">😑</span><span>clipbored<span class="brand-period">.</span></span></a>
     <div class="topbar-actions"><div class="sync-status"><span class="live-dot"></span><span id="sync-label">Sign in</span></div><button class="signout-button" id="signout-button" hidden>Sign out</button></div>
   </header>
 
@@ -33,7 +34,7 @@
         <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required>
         <label for="auth-password">Password</label>
         <input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required>
-        <div class="auth-actions"><button class="save-button" id="auth-submit" type="submit">Sign in</button><button class="auth-switch" id="auth-switch" type="button">Create an account</button></div>
+        <div class="auth-actions"><button class="save-button" id="auth-submit" type="submit">Sign in</button><button class="auth-switch" id="auth-switch" type="button">Create an account</button><button class="auth-switch" id="resend-confirmation" type="button" hidden>Resend confirmation email</button></div>
       </form>
     </section>
 

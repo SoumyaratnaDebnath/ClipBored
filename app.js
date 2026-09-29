@@ -1,5 +1,6 @@
 const SUPABASE_URL = 'https://nfgwvecwqctiqrarqiwm.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_U3tkA1T8GZBi0or2EwrePg_v_L38yE4';
+const AUTH_REDIRECT_URL = 'https://soumyaratnadebnath.github.io/ClipBored/';
 let supabaseClient = null;
 try {
   if (!window.supabase?.createClient) throw new Error('Supabase library did not load.');
@@ -20,6 +21,7 @@ const clipboardUI = document.querySelector('#clipboard-ui');
 const authForm = document.querySelector('#auth-form');
 const authSwitch = document.querySelector('#auth-switch');
 const authSubmit = document.querySelector('#auth-submit');
+const resendConfirmation = document.querySelector('#resend-confirmation');
 const signoutButton = document.querySelector('#signout-button');
 let toastTimer;
 let isSignUp = false;
@@ -158,12 +160,25 @@ authForm.addEventListener('submit', async event => {
   const email = document.querySelector('#auth-email').value.trim();
   const password = document.querySelector('#auth-password').value;
   const result = isSignUp
-    ? await supabaseClient.auth.signUp({ email, password, options:{ emailRedirectTo:window.location.href.split('#')[0] } })
+    ? await supabaseClient.auth.signUp({ email, password, options:{ emailRedirectTo:AUTH_REDIRECT_URL } })
     : await supabaseClient.auth.signInWithPassword({ email, password });
   authSubmit.disabled = false;
   if (result.error) { notify(result.error.message); return; }
-  if (isSignUp && !result.data.session) notify('Check your email to confirm your account, then sign in.');
+  if (isSignUp && !result.data.session) {
+    resendConfirmation.hidden = false;
+    notify('Check your email to confirm your account, then sign in.');
+  }
   else notify(isSignUp ? 'Account created' : 'Signed in');
+});
+resendConfirmation.addEventListener('click', async () => {
+  const email = document.querySelector('#auth-email').value.trim();
+  if (!email) { notify('Enter your email address first.'); return; }
+  resendConfirmation.disabled = true;
+  const { error } = await supabaseClient.auth.resend({
+    type:'signup', email, options:{ emailRedirectTo:AUTH_REDIRECT_URL }
+  });
+  resendConfirmation.disabled = false;
+  notify(error ? error.message : 'A new confirmation email is on its way.');
 });
 signoutButton.addEventListener('click', async () => {
   const { error } = await supabaseClient.auth.signOut();
