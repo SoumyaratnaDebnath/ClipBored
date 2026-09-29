@@ -9,13 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="document.getElementById('sync-label').textContent='Offline'"></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="/" aria-label="ClipBored home"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5.5h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z"/><path d="M9 5V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1"/></svg></span><span>clipbored<span class="brand-period">.</span></span></a>
-    <div class="topbar-actions"><div class="sync-status"><span class="live-dot"></span><span id="sync-label">Connecting</span></div><button class="signout-button" id="signout-button" hidden>Sign out</button></div>
+    <div class="topbar-actions"><div class="sync-status"><span class="live-dot"></span><span id="sync-label">Sign in</span></div><button class="signout-button" id="signout-button" hidden>Sign out</button></div>
   </header>
 
   <main class="shell">
@@ -24,7 +24,7 @@
       <h1>A little space for <span>what matters.</span></h1>
     </section>
 
-    <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title" hidden>
+    <section class="auth-panel" id="auth-panel" aria-labelledby="auth-title">
       <span class="section-kicker">YOUR PRIVATE SPACE</span>
       <h2 id="auth-title">Sign in to your clipboard</h2>
       <p>Use the same account on each of your devices to sync your clips.</p>

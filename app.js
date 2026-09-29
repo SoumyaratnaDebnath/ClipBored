@@ -1,6 +1,12 @@
 const SUPABASE_URL = 'https://nfgwvecwqctiqrarqiwm.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_U3tkA1T8GZBi0or2EwrePg_v_L38yE4';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let supabase = null;
+try {
+  if (!window.supabase?.createClient) throw new Error('Supabase library did not load.');
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+} catch (error) {
+  console.error('Supabase initialization failed:', error);
+}
 
 const input = document.querySelector('#clip-input');
 const list = document.querySelector('#clip-list');
@@ -17,6 +23,15 @@ const authSubmit = document.querySelector('#auth-submit');
 const signoutButton = document.querySelector('#signout-button');
 let toastTimer;
 let isSignUp = false;
+
+if (!supabase) {
+  authPanel.hidden = false;
+  clipboardUI.hidden = true;
+  syncLabel.textContent = 'Offline';
+  authSubmit.disabled = true;
+  authSwitch.disabled = true;
+  notify('Could not start Supabase. Check your connection and reload.');
+}
 
 function notify(message) {
   toast.textContent = message;
@@ -138,6 +153,7 @@ authSwitch.addEventListener('click', () => {
 });
 authForm.addEventListener('submit', async event => {
   event.preventDefault();
+  if (!supabase) { notify('Supabase is unavailable. Reload the page and try again.'); return; }
   authSubmit.disabled = true;
   const email = document.querySelector('#auth-email').value.trim();
   const password = document.querySelector('#auth-password').value;
@@ -154,6 +170,18 @@ signoutButton.addEventListener('click', async () => {
   if (error) notify(error.message);
   else notify('Signed out');
 });
-supabase.auth.onAuthStateChange((_event, session) => setSignedIn(session?.user || null));
-supabase.auth.getSession().then(({ data }) => setSignedIn(data.session?.user || null));
+if (supabase) {
+  syncLabel.textContent = 'Checking session';
+  supabase.auth.onAuthStateChange((_event, session) => setSignedIn(session?.user || null));
+  supabase.auth.getSession()
+    .then(({ data, error }) => {
+      if (error) throw error;
+      setSignedIn(data.session?.user || null);
+    })
+    .catch(error => {
+      console.error('Could not restore session:', error);
+      setSignedIn(null);
+      notify('Could not check your sign-in session. Please sign in again.');
+    });
+}
 setInterval(() => { if (!clipboardUI.hidden) loadClips(); }, 15000);
