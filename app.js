@@ -1,9 +1,9 @@
 const SUPABASE_URL = 'https://nfgwvecwqctiqrarqiwm.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_U3tkA1T8GZBi0or2EwrePg_v_L38yE4';
-let supabase = null;
+let supabaseClient = null;
 try {
   if (!window.supabase?.createClient) throw new Error('Supabase library did not load.');
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 } catch (error) {
   console.error('Supabase initialization failed:', error);
 }
@@ -24,7 +24,7 @@ const signoutButton = document.querySelector('#signout-button');
 let toastTimer;
 let isSignUp = false;
 
-if (!supabase) {
+if (!supabaseClient) {
   authPanel.hidden = false;
   clipboardUI.hidden = true;
   syncLabel.textContent = 'Offline';
@@ -61,7 +61,7 @@ function setSignedIn(user) {
 }
 async function loadClips() {
   syncLabel.textContent = 'Syncing';
-  const { data, error } = await supabase.from('clips').select('id,text,created_at').order('created_at', { ascending:false });
+  const { data, error } = await supabaseClient.from('clips').select('id,text,created_at').order('created_at', { ascending:false });
   if (error) {
     syncLabel.textContent = 'Offline';
     notify(error.message);
@@ -107,7 +107,7 @@ function render(items) {
     remove.setAttribute('aria-label', 'Delete clip');
     remove.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 4.5h10M6 4.5V3h4v1.5m2 0-.5 9h-7l-.5-9m3 2.5v4m2-4v4"/></svg>';
     remove.addEventListener('click', async () => {
-      const { error } = await supabase.from('clips').delete().eq('id', item.id);
+      const { error } = await supabaseClient.from('clips').delete().eq('id', item.id);
       if (error) notify(error.message);
       else { await loadClips(); notify('Clip deleted'); }
     });
@@ -122,7 +122,7 @@ async function saveClip() {
   if (!text) { input.focus(); notify('Write or paste something first'); return; }
   const button = document.querySelector('#save-button');
   button.disabled = true;
-  const { error } = await supabase.from('clips').insert({ text });
+  const { error } = await supabaseClient.from('clips').insert({ text });
   button.disabled = false;
   if (error) { notify(error.message); return; }
   input.value = '';
@@ -153,27 +153,27 @@ authSwitch.addEventListener('click', () => {
 });
 authForm.addEventListener('submit', async event => {
   event.preventDefault();
-  if (!supabase) { notify('Supabase is unavailable. Reload the page and try again.'); return; }
+  if (!supabaseClient) { notify('Supabase is unavailable. Reload the page and try again.'); return; }
   authSubmit.disabled = true;
   const email = document.querySelector('#auth-email').value.trim();
   const password = document.querySelector('#auth-password').value;
   const result = isSignUp
-    ? await supabase.auth.signUp({ email, password, options:{ emailRedirectTo:window.location.href.split('#')[0] } })
-    : await supabase.auth.signInWithPassword({ email, password });
+    ? await supabaseClient.auth.signUp({ email, password, options:{ emailRedirectTo:window.location.href.split('#')[0] } })
+    : await supabaseClient.auth.signInWithPassword({ email, password });
   authSubmit.disabled = false;
   if (result.error) { notify(result.error.message); return; }
   if (isSignUp && !result.data.session) notify('Check your email to confirm your account, then sign in.');
   else notify(isSignUp ? 'Account created' : 'Signed in');
 });
 signoutButton.addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabaseClient.auth.signOut();
   if (error) notify(error.message);
   else notify('Signed out');
 });
-if (supabase) {
+if (supabaseClient) {
   syncLabel.textContent = 'Checking session';
-  supabase.auth.onAuthStateChange((_event, session) => setSignedIn(session?.user || null));
-  supabase.auth.getSession()
+  supabaseClient.auth.onAuthStateChange((_event, session) => setSignedIn(session?.user || null));
+  supabaseClient.auth.getSession()
     .then(({ data, error }) => {
       if (error) throw error;
       setSignedIn(data.session?.user || null);
